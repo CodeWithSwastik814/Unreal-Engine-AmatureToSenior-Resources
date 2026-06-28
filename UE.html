@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Unreal Engine Developer Roadmap</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  :root {
+    --bg: #0a0b10;
+    --surface: #111318;
+    --surface2: #181b22;
+    --border: #1e2230;
+    --accent: #4f8ef7;
+    --accent2: #7c3aed;
+    --gold: #f5a623;
+    --green: #22c55e;
+    --red: #ef4444;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --dim: #94a3b8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: linear-gradient(135deg, #0d0f1a 0%, #111827 50%, #0a0b10 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 40px 32px 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 80% at 70% 50%, rgba(79,142,247,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(79,142,247,0.12);
+    border: 1px solid rgba(79,142,247,0.3);
+    border-radius: 4px;
+    padding: 4px 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    margin-bottom: 16px;
+  }
+  header h1 {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    line-height: 1.1;
+    color: #fff;
+  }
+  header h1 span {
+    background: linear-gradient(90deg, var(--accent), #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  header p {
+    color: var(--dim);
+    margin-top: 10px;
+    font-size: 13px;
+    max-width: 560px;
+  }
+  .header-meta {
+    display: flex;
+    gap: 24px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+  }
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .meta-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .dot-green { background: var(--green); }
+  .dot-gold { background: var(--gold); }
+  .dot-red { background: var(--red); }
+
+  /* ── LAYOUT ── */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 20px 64px;
+  }
+
+  /* ── PHASE SELECTOR ── */
+  .phase-nav {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+  }
+  .phase-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    transition: all 0.15s;
+  }
+  .phase-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .phase-btn.active {
+    background: rgba(79,142,247,0.15);
+    border-color: var(--accent);
+    color: #fff;
+  }
+
+  /* ── PHASE BLOCK ── */
+  .phase { display: none; }
+  .phase.active { display: block; }
+
+  .phase-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 28px;
+    padding: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+  }
+  .phase-header::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+  .phase-0 .phase-header::after { background: linear-gradient(90deg, var(--green), #16a34a); }
+  .phase-1 .phase-header::after { background: linear-gradient(90deg, var(--accent), #3b82f6); }
+  .phase-2 .phase-header::after { background: linear-gradient(90deg, var(--accent2), #7c3aed); }
+  .phase-3 .phase-header::after { background: linear-gradient(90deg, var(--gold), #d97706); }
+  .phase-4 .phase-header::after { background: linear-gradient(90deg, var(--red), #dc2626); }
+
+  .phase-icon {
+    font-size: 32px;
+    line-height: 1;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .phase-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: #fff;
+  }
+  .phase-meta {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+  }
+  .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 3px;
+    letter-spacing: 0.05em;
+  }
+  .tag-time { background: rgba(245,166,35,0.15); color: var(--gold); border: 1px solid rgba(245,166,35,0.25); }
+  .tag-level { background: rgba(34,197,94,0.12); color: var(--green); border: 1px solid rgba(34,197,94,0.25); }
+  .phase-desc {
+    color: var(--dim);
+    font-size: 13px;
+    margin-top: 8px;
+    line-height: 1.5;
+  }
+
+  /* ── MODULE GRID ── */
+  .modules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .module {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: border-color 0.15s;
+  }
+  .module:hover { border-color: #2a3050; }
+
+  .module-head {
+    padding: 14px 16px 10px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .module-icon { font-size: 16px; }
+  .module-name {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.03em;
+    color: #fff;
+    flex: 1;
+  }
+  .module-count {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  .module-body { padding: 12px 16px 14px; }
+
+  .concept-list {
+    list-style: none;
+  }
+  .concept-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    font-size: 12.5px;
+    color: var(--dim);
+  }
+  .concept-list li:last-child { border-bottom: none; }
+  .concept-list li::before {
+    content: '▸';
+    color: var(--accent);
+    font-size: 10px;
+    margin-top: 2px;
+    flex-shrink: 0;
+    opacity: 0.7;
+  }
+  .sub {
+    display: block;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 1px;
+  }
+
+  /* ── PROJECT CARD ── */
+  .projects-section { margin-top: 4px; }
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 12px;
+  }
+
+  .project-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .project-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px;
+    height: 100%;
+    border-radius: 8px 0 0 8px;
+  }
+  .proj-beginner::before { background: var(--green); }
+  .proj-intermediate::before { background: var(--accent); }
+  .proj-advanced::before { background: var(--accent2); }
+  .proj-capstone::before { background: var(--gold); }
+
+  .project-name {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+  .project-desc {
+    font-size: 11.5px;
+    color: var(--dim);
+    line-height: 1.5;
+    margin-bottom: 10px;
+  }
+  .project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .ptag {
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 3px;
+    padding: 1px 6px;
+    color: var(--muted);
+  }
+
+  /* ── TIPS ── */
+  .tips-box {
+    background: rgba(79,142,247,0.05);
+    border: 1px solid rgba(79,142,247,0.2);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-top: 24px;
+  }
+  .tips-box .tip-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    margin-bottom: 10px;
+  }
+  .tips-box ul { list-style: none; }
+  .tips-box li {
+    font-size: 12.5px;
+    color: var(--dim);
+    padding: 4px 0;
+    display: flex;
+    gap: 8px;
+  }
+  .tips-box li::before { content: '💬'; font-size: 11px; margin-top: 2px; flex-shrink: 0; }
+
+  /* ── PROGRESS TRACKER ── */
+  .tracker {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 28px;
+  }
+  .tracker-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    color: #fff;
+    margin-bottom: 14px;
+  }
+  .track-phases {
+    display: flex;
+    gap: 0;
+    border-radius: 6px;
+    overflow: hidden;
+    height: 8px;
+    margin-bottom: 10px;
+  }
+  .tp { flex: 1; }
+  .tp-0 { background: var(--green); }
+  .tp-1 { background: var(--accent); }
+  .tp-2 { background: var(--accent2); }
+  .tp-3 { background: var(--gold); }
+  .tp-4 { background: var(--red); }
+  .track-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--muted);
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    header { padding: 28px 16px 24px; }
+    .container { padding: 20px 12px 48px; }
+    .modules-grid, .projects-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-badge">// INTERNAL GUIDE · GAME DEV DIVISION</div>
+  <h1>Unreal Engine<br><span>Developer Roadmap</span></h1>
+  <p>From intern to senior — a structured path through every concept, system, and project you need to master Unreal Engine 5.</p>
+  <div class="header-meta">
+    <div class="meta-item"><div class="meta-dot dot-green"></div> Beginner</div>
+    <div class="meta-item"><div class="meta-dot" style="background:var(--accent)"></div> Intermediate</div>
+    <div class="meta-item"><div class="meta-dot" style="background:var(--accent2)"></div> Advanced</div>
+    <div class="meta-item"><div class="meta-dot dot-gold"></div> Senior / Production</div>
+    <div class="meta-item"><div class="meta-dot dot-red"></div> Expert</div>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- TRACKER -->
+  <div class="tracker">
+    <div class="tracker-title">Total Timeline: ~2–3 Years of Dedicated Practice</div>
+    <div class="track-phases">
+      <div class="tp tp-0"></div>
+      <div class="tp tp-1"></div>
+      <div class="tp tp-2"></div>
+      <div class="tp tp-3"></div>
+      <div class="tp tp-4"></div>
+    </div>
+    <div class="track-labels">
+      <span>Phase 1 · 0–3mo</span>
+      <span>Phase 2 · 3–8mo</span>
+      <span>Phase 3 · 8–18mo</span>
+      <span>Phase 4 · 18–28mo</span>
+      <span>Phase 5 · 28–36mo</span>
+    </div>
+  </div>
+
+  <!-- PHASE NAV -->
+  <div class="phase-nav">
+    <button class="phase-btn active" onclick="showPhase(0)">🟢 Phase 1 · Foundation</button>
+    <button class="phase-btn" onclick="showPhase(1)">🔵 Phase 2 · Core Systems</button>
+    <button class="phase-btn" onclick="showPhase(2)">🟣 Phase 3 · Advanced</button>
+    <button class="phase-btn" onclick="showPhase(3)">🟡 Phase 4 · Production</button>
+    <button class="phase-btn" onclick="showPhase(4)">🔴 Phase 5 · Senior</button>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- PHASE 0 — FOUNDATION -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="phase phase-0 active">
+    <div class="phase-header">
+      <div class="phase-icon">🟢</div>
+      <div>
+        <div class="phase-title">Phase 1 — Foundation & Engine Fundamentals</div>
+        <div class="phase-meta">
+          <span class="tag tag-time">0–3 months</span>
+          <span class="tag tag-level">BEGINNER</span>
+        </div>
+        <div class="phase-desc">You already know the Editor UI and basic movement. Now we lock down the non-negotiables: how UE5 thinks, how Blueprints work, and how a complete scene is built end-to-end.</div>
+      </div>
+    </div>
+
+    <div class="modules-grid">
+
+      <div class="module">
+        <div class="module-head"><span class="module-icon">🖥️</span><span class="module-name">Editor Mastery</span><span class="module-count">8 topics</span></div>
+        <div class="module-body">
+          <ul class="concept-list">
+            <li>Viewport navigation & hotkeys<span class="sub">Perspective, Ortho, Lit/Unlit, Wireframe modes</span></li>
+            <li>Outliner, Details panel, World Settings</li>
+            <li>Content Browser deep dive<span class="sub">Folder structure, filters, asset search, redirectors</span></li>
+            <li>Actor placement & transform tools<span class="sub">Snapping, pivot points, local vs world space</span></li>
+            <li>Editor preferences & shortcuts customization</li>
+            <li>Level management & sub-levels</li>
+            <li>Undo history, play-in-editor modes (PIE/SIE/Standalone)</li>
+            <li>Packaging & platform selection basics</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="module">
+        <div class="module-head"><span class="module-icon">📘</span><span class="module-name">Blueprint Fundamentals</span><span class="module-count">10 topics</span></div>
+        <div class="module-body">
+          <ul class="concept-list">
+            <li>Blueprint classes vs Level Blueprints</li>
+            <li>Variables — types, categories, replication flags</li>
+            <li>Functions vs Events vs Macros</li>
+            <li>Flow control<span class="sub">Branch, Sequence, FlipFlop, DoOnce, Gate</span></li>
+            <li>Timers & Delays</li>
+            <li>Actor Communication<span class="sub">Cast To, Get All Actors Of Class, interfaces intro</span></li>
+            <li>Components: Static Mesh, Collision, Arrow, Scene</li>
+            <li>Construction Script</li>
+            <li>Blueprint Debugging<span class="sub">Breakpoints, Watch values, Print String</span></li>
+            <li>Data Types: Struct, Enum, Array, Map, Set</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="module">
+        <div class="module-head"><span class="module-icon">🏃</span><span class="module-name">Character & Movement</span><span class="module-count">7 topics</span></div>
+        <div class="module-body">
+          <ul class="concept-list">
+            <li>Character class anatomy<span class="sub">Capsule, Mesh, Camera, SpringArm</span></li>
+            <li>CharacterMovementComponent deep dive<span class="sub">Walk, jump, fly, swim, crouch params</span></li>
+            <li>Enhanced Input System<span class="sub">Input Actions, Mapping Contexts, modifiers</span></li>
+            <li>Third-person vs first-person setup</li>
+            <li>Camera lag, FOV, arm length tuning</li>
+            <li>Player Controller basics</li>
+            <li>Game Mode & Game State intro</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="module">
+        <div class="module-head"><span class="module-icon">🌍</span><span class="module-name">World Building Basics</span><span class="module-count">6 topics</span></div>
+        <div class="module-body">
+          <ul class="concept-list">
+            <li>Static Mesh Actor — LODs, collision, mobility</li>
+            <li>BSP / Geometry tools (rapid prototyping)</li>
+            <li>Landscape tool — sculpt, paint, erosion</li>
+            <li>Foliage tool — density, cull distance</li>
+            <li>Basic lighting<span class="sub">Directional, Point, Spot, Sky Light, sky atmosphere</span></li>
+            <li>Lumen & Nanite — what they are and when to toggle</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="module">
+        <div class="module-head"><span class="module-icon">🎨</span><span class="module-name">Materials 101</span><span class="module-count">6 topics</span></div>
+        <div class="module-body">
+          <ul class="concept-list">
+            <li>Material Editor nodes overview</li>
+            <li>PBR workflow<span class="sub">Base Color, Metallic, Roughness, Normal, AO</span></li>
+            <li>Texture import & compression settings</li>
+            <li>Material Instances & parameters</li>
+            <li>Blend modes (Opaque, Masked, Translucent)</li>
+            <li>UV mapping concepts</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="module">
+        <div class="module-head"><span class="module-icon">🔊</span><span class="module-name">Audio Basics</span><span class="module-count">4 topics</span></div>
+        <div class="module-body">
+          <ul class="concept-list">
+            <li>Sound Wave vs Sound Cue</li>
+            <li>Ambient sounds & attenuation</li>
+            <li>Play Sound at Location / Attached</li>
+            <li>Sound Classes & Sound Mix intro</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="projects-section">
+      <div class="section-label">PHASE 1 PROJECTS</div>
+      <div class="projects-grid">
+        <div class="project-card proj-beginner">
+          <div class="project-name">🎯 Coin Collector</div>
+          <div class="project-desc">Top-down game where the player collects coins before a timer runs out. Covers Overlap events, HUD, timers, win/lose states.</div>
+          <div class="project-tags"><span class="ptag">Blueprint</span><span class="ptag">UI</span><span class="ptag">Overlap</span></div>
+        </div>
+        <div class="project-card proj-beginner">
+          <div class="project-name">🧱 Platform Jumper</div>
+          <div class="project-desc">3D platformer with moving platforms, checkpoints, respawn logic, and a simple death volume.</div>
+          <div class="project-tags"><span class="ptag">CharMovement</span><span class="ptag">Timeline</span><span class="ptag">Trigger</span></div>
+        </div>
+        <div class="project-card proj-beginner">
+          <div class="project-name">🚪 Interactive Room</div>
+          <div class="project-desc">A room with interactable door, light switch, TV screen, and a drawer — all driven purely by Blueprints and timelines.</div>
+          <div class="project-tags"><span class="ptag">Timeline</span><span class="ptag">Interface</span><span class="ptag">Lighting</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tips-box">
+      <div class="tip-title">// SENIOR ADVICE FOR PHASE 1</div>
+      <ul>
+        <li>Every time you make something work in Blueprint, ask yourself WHY it works. Read the node docs.</li>
+        <li>Naming conventions matter from day 1. Use prefixes: BP_, SM_, T_, M_, SK_, ABP_.</li>
+        <li>Don't skip the Interactive Room project — understanding timelines here will save you later in animation and gameplay.</li>
+        <li>Install Rider for Unreal or VS Code early, even if you're not writing C++ yet. Get comfortable with the toolchain.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- PHASE 1 — CORE SYSTEMS -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="phase phase-1">
+    <div class="phase-header">
+      <div class="phase-icon">🔵</div>
+      <div>
+        <div class="phase-title">Phase 2 — Core Game Systems</div>
+        <div class="phase-meta">
+          <span class="tag tag-time">3–8 months</span>
+          <span class="tag tag-level">JUNIOR → MID</span>
+        </div>
+        <div class="phase-desc">This is where most juniors stall. We go deep on animation, AI, g
